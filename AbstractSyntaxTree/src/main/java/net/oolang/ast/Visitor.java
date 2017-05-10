@@ -8,11 +8,12 @@ package net.oolang.ast;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import net.oolang.functional.tuple.Pair;
 
 public abstract class Visitor<C extends Context> {
 
     private C context;
-    private Map<AstType, Consumer<Ast>> reg;
+    private Map<Pair<Class<? extends Ast>, AstType>, Consumer<? extends Ast>> reg;
 
     public C getContext() {
         return context;
@@ -31,22 +32,39 @@ public abstract class Visitor<C extends Context> {
             registerVisitors();
         }
     }
-
-    public Consumer<Ast> getVisitor(AstType astType) {
+    
+    public <A extends Ast> Consumer<A> getVisitor(Class<A> clazz, AstType astType) {
         lazyInitialize();
 
-        if (!reg.containsKey(astType)) {
-            throw new AstException("Ast of type [" + astType.getName() + "] is not covered by a visitor !");
+        /*
+        Pair<Class<? extends Ast>, AstType> key = new Pair<>(clazz, astType);
+
+        if (!reg.containsKey(key)) {
+            throw new AstException(String.format("Ast for class [%1s] of type [%2s] is not covered by a visitor !", clazz.getSimpleName(), astType.getName()));
         }
-        return reg.get(astType);
+        return (Consumer<A>) reg.get(key);*/
+        Consumer<A> consumer = getRecursiveVisitor(clazz, astType);
+        if (consumer == null) {
+            throw new AstException(String.format("Ast for class [%1s] of type [%2s] is not covered by a visitor !", clazz.getSimpleName(), astType.getName()));
+        }
+        return consumer;
+    }
+    
+    private <A extends Ast> Consumer<A> getRecursiveVisitor(Class<? extends Ast> clazz, AstType astType) {
+        Pair<Class<? extends Ast>, AstType> key = new Pair<>(clazz, astType);
+        if (reg.containsKey(key)) return (Consumer<A>) reg.get(key);
+        if (!clazz.getSuperclass().equals(Object.class)) {
+            return getRecursiveVisitor((Class<? extends Ast>) clazz.getSuperclass(), astType);
+        }
+        return null;
     }
 
-    public abstract C instancingContext();
+    protected abstract C instancingContext();
 
     protected abstract void registerVisitors();
 
-    protected void register(AstType astType, Consumer<Ast> visitor) {
-        reg.put(astType, visitor);
+    protected <A extends Ast> void register(Class<A> clazz, AstType astType, Consumer<A> visitor) {
+        reg.put(new Pair<>(clazz, astType), visitor);
     }
 
 }

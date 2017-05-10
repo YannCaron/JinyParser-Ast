@@ -5,21 +5,17 @@
  */
 package net.oolang.ast;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 
-public class Ast {
+public abstract class Ast<A extends Ast> {
 
-    protected Consumer<Ast> visitor;
-    private final List<Ast> children;
-    private final Symbol symbol;
     private final AstType type;
+    private Consumer<A> visitor;
+    private final Symbol symbol;
 
-    public Ast(AstType type, Symbol symbol, Ast... ch) {
+    public Ast(AstType type, Symbol symbol) {
         this.type = type;
         this.symbol = symbol;
-        this.children = Arrays.asList(ch);
     }
 
     public Symbol getSymbol() {
@@ -30,32 +26,19 @@ public class Ast {
         return type;
     }
 
-    public void visiteChild(int currentIndex) {
-        if (currentIndex >= children.size()) {
-            throw new AstException("Child " + currentIndex + " does not exists in children list of the AST !");
-        }
-        
-        children.get(currentIndex).visite();
-        currentIndex++;
-    }
-    
-    public void addChild(Ast child) {
-        children.add(child);
+    public Consumer<A> getVisitor() {
+        return visitor;
     }
 
     // visitor part
-    void acceptVisitor(Visitor<? extends Context> visitor) {
-        this.visitor = visitor.getVisitor(type);
-
-        if (children != null) {
-            for (Ast child : children) {
-                child.acceptVisitor(visitor);
-            }
-        }
+    protected void acceptVisitor(Visitor<? extends Context> visitor) {
+        this.visitor = visitor.getVisitor(getAstClass(), type);
     }
 
-    void visite() {
-        visitor.accept(this);
+    protected abstract Class<A> getAstClass();
+
+    protected void visite() {
+        getVisitor().accept((A) this);
     }
 
 }
