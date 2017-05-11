@@ -30,7 +30,7 @@ public class Main {
         AstType NUMBER = new AstType("Number");
         AstType OPERATION = new AstType("Addition");
 
-        Ast left = new AstValue(NUMBER, new Symbol("1"));
+        Ast left = new AstDefault(NUMBER, new Symbol("1"));
         Ast right = new AstDefault(NUMBER, new Symbol("7"));
         Ast addition = new AstDefault(OPERATION, new Symbol("+"), left, right);
 
@@ -45,10 +45,6 @@ public class Main {
 
             @Override
             public void registerVisitors() {
-                register(AstValue.class, NUMBER, (AstValue ast) -> {
-                    getContext().getBuilder().append(ast.getValue());
-                });
-
                 registerDefault(NUMBER, (AstDefault ast) -> {
                     getContext().getBuilder().append(ast.getSymbol().getValue());
                 });
