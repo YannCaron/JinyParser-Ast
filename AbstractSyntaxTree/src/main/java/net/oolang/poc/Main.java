@@ -50,7 +50,7 @@ public class Main {
                     getContext().getBuilder().append(ast.getValue());
                 });
 
-                register(NUMBER, (Ast ast) -> {
+                registerLeaf(NUMBER, (AstDefaultLeaf ast) -> {
                     getContext().getBuilder().append(ast.getSymbol().getValue());
                 });
 
