@@ -1,8 +1,7 @@
 package net.oolang.poc;
 
 import net.oolang.ast.Ast;
-import net.oolang.ast.AstDefaultLeaf;
-import net.oolang.ast.AstDefaultNode;
+import net.oolang.ast.AstDefault;
 import net.oolang.ast.AstType;
 import net.oolang.ast.Context;
 import net.oolang.ast.ExecutionEntryPoint;
@@ -32,11 +31,11 @@ public class Main {
         AstType OPERATION = new AstType("Addition");
 
         Ast left = new AstValue(NUMBER, new Symbol("1"));
-        Ast right = new AstDefaultLeaf(NUMBER, new Symbol("7"));
-        Ast addition = new AstDefaultNode(OPERATION, new Symbol("+"), left, right);
+        Ast right = new AstDefault(NUMBER, new Symbol("7"));
+        Ast addition = new AstDefault(OPERATION, new Symbol("+"), left, right);
 
-        Ast subRight = new AstDefaultLeaf(NUMBER, new Symbol("8"));
-        Ast substraction = new AstDefaultNode(OPERATION, new Symbol("-"), addition, subRight);
+        Ast subRight = new AstDefault(NUMBER, new Symbol("8"));
+        Ast substraction = new AstDefault(OPERATION, new Symbol("-"), addition, subRight);
 
         Visitor<PrintContext> printVisitor = new Visitor<PrintContext>() {
             @Override
@@ -50,11 +49,11 @@ public class Main {
                     getContext().getBuilder().append(ast.getValue());
                 });
 
-                registerLeaf(NUMBER, (AstDefaultLeaf ast) -> {
+                registerDefault(NUMBER, (AstDefault ast) -> {
                     getContext().getBuilder().append(ast.getSymbol().getValue());
                 });
 
-                registerNode(OPERATION, (AstDefaultNode ast) -> {
+                registerDefault(OPERATION, (AstDefault ast) -> {
                     ast.visiteChild(0);
                     getContext().getBuilder().append(' ');
                     getContext().getBuilder().append(ast.getSymbol().getValue());

@@ -8,11 +8,11 @@ package net.oolang.ast;
 import java.util.Arrays;
 import java.util.List;
 
-public class AstDefaultNode extends Ast<AstDefaultNode> {
+public class AstDefault extends Ast<AstDefault> {
 
     private final List<Ast> children;
 
-    public AstDefaultNode(AstType type, Symbol symbol, Ast... ch) {
+    public AstDefault(AstType type, Symbol symbol, Ast... ch) {
         super(type, symbol);
         this.children = Arrays.asList(ch);
     }
@@ -40,8 +40,8 @@ public class AstDefaultNode extends Ast<AstDefaultNode> {
     }
 
     @Override
-    protected Class<AstDefaultNode> getAstClass() {
-        return AstDefaultNode.class;
+    protected Class<AstDefault> getAstClass() {
+        return AstDefault.class;
     }
 
 }

@@ -73,12 +73,8 @@ public abstract class Visitor<C extends Context> {
         reg.put(new Pair<>(Ast.class, astType), visitor);
     }
 
-    protected void registerNode(AstType astType, Consumer<AstDefaultNode> visitor) {
-        reg.put(new Pair<>(AstDefaultNode.class, astType), visitor);
-    }
-
-    protected void registerLeaf(AstType astType, Consumer<AstDefaultLeaf> visitor) {
-        reg.put(new Pair<>(AstDefaultLeaf.class, astType), visitor);
+    protected void registerDefault(AstType astType, Consumer<AstDefault> visitor) {
+        reg.put(new Pair<>(AstDefault.class, astType), visitor);
     }
 
 }
