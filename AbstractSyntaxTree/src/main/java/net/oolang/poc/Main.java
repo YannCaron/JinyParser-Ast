@@ -50,11 +50,11 @@ public class Main {
                     getContext().getBuilder().append(ast.getValue());
                 });
 
-                register(Ast.class, NUMBER, (Ast ast) -> {
+                register(NUMBER, (Ast ast) -> {
                     getContext().getBuilder().append(ast.getSymbol().getValue());
                 });
 
-                register(AstDefaultNode.class, OPERATION, (AstDefaultNode ast) -> {
+                registerNode(OPERATION, (AstDefaultNode ast) -> {
                     ast.visiteChild(0);
                     getContext().getBuilder().append(' ');
                     getContext().getBuilder().append(ast.getSymbol().getValue());

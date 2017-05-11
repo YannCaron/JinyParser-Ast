@@ -32,7 +32,7 @@ public abstract class Visitor<C extends Context> {
             registerVisitors();
         }
     }
-    
+
     public <A extends Ast> Consumer<A> getVisitor(Class<A> clazz, AstType astType) {
         lazyInitialize();
 
@@ -49,10 +49,12 @@ public abstract class Visitor<C extends Context> {
         }
         return consumer;
     }
-    
+
     private <A extends Ast> Consumer<A> getRecursiveVisitor(Class<? extends Ast> clazz, AstType astType) {
         Pair<Class<? extends Ast>, AstType> key = new Pair<>(clazz, astType);
-        if (reg.containsKey(key)) return (Consumer<A>) reg.get(key);
+        if (reg.containsKey(key)) {
+            return (Consumer<A>) reg.get(key);
+        }
         if (!clazz.getSuperclass().equals(Object.class)) {
             return getRecursiveVisitor((Class<? extends Ast>) clazz.getSuperclass(), astType);
         }
@@ -65,6 +67,18 @@ public abstract class Visitor<C extends Context> {
 
     protected <A extends Ast> void register(Class<A> clazz, AstType astType, Consumer<A> visitor) {
         reg.put(new Pair<>(clazz, astType), visitor);
+    }
+
+    protected void register(AstType astType, Consumer<Ast> visitor) {
+        reg.put(new Pair<>(Ast.class, astType), visitor);
+    }
+
+    protected void registerNode(AstType astType, Consumer<AstDefaultNode> visitor) {
+        reg.put(new Pair<>(AstDefaultNode.class, astType), visitor);
+    }
+
+    protected void registerLeaf(AstType astType, Consumer<AstDefaultLeaf> visitor) {
+        reg.put(new Pair<>(AstDefaultLeaf.class, astType), visitor);
     }
 
 }
